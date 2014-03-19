@@ -33,9 +33,15 @@ angular.module('notifications', []).
           noti.onclose = onclose;
         }
         noti.show();
+
+        // Return notification instance so
+        // we can modify it on application code
+        // if needed
+        return noti;
       }
       else {
         settings.html5Mode = false;
+        return null;
       }
     }
 
@@ -156,16 +162,22 @@ angular.module('notifications', []).
           'title': title,
           'content': content,
           'timestamp': +new Date(),
-          'userData': userData
+          'userData': userData,
+          'html5Notification': null
         };
         notifications.push(notification);
 
         if(settings.html5Mode){
-          html5Notify(image, title, content, function(){
+          var noti = html5Notify(image, title, content, function() {
             console.log("inner on display function");
           }, function(){
             console.log("inner on close function");
           });
+
+          // Store desktop notification in
+          // object so that we can access it on application code
+          // and close it when needed.
+          notification.html5Notification = noti;
         }
         else{
           queue.push(notification);
