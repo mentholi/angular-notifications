@@ -63,6 +63,7 @@
   -moz-transition: all 0.35s cubic-bezier(0.31, 0.39, 0.21, 1.65);
   transition: all 0.35s cubic-bezier(0.31, 0.39, 0.21, 1.65);
   cursor: pointer;
+  z-index:9;
 }
 .dr-notification-close-btn i {
   padding-left: 3px;
