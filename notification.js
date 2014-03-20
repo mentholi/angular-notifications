@@ -1,9 +1,7 @@
 'use strict';
 
 angular.module('notifications', []).
-  factory('$notification', ['$timeout',function($timeout){
-
-    console.log('notification service online');
+  factory('$notification', ['$timeout',function($timeout) {
     var notifications = JSON.parse(localStorage.getItem('$notifications')) || [],
         queue = [];
 
@@ -44,7 +42,6 @@ angular.module('notifications', []).
           if(!('permission' in Notification)) {
             Notification.permission = permission;
           }
-
           // If the user is okay, let's create a notification
           if (permission === 'granted') {
             return getDeskNote();
@@ -88,25 +85,13 @@ angular.module('notifications', []).
       },
 
       requestHtml5ModePermissions: function(){
-        if (window.webkitNotifications){
-          console.log('notifications are available');
-          if (window.webkitNotifications.checkPermission() === 0) {
+        if (Notification) {
+          if (Notification.permission == 'granted') {
             return true;
-          }
-          else{
-            window.webkitNotifications.requestPermission(function(){
-              if(window.webkitNotifications.checkPermission() === 0){
-                settings.html5Mode = true;
-              }
-              else{
-                settings.html5Mode = false;
-              }
-            });
+          } else {
             return false;
           }
-        }
-        else{
-          console.log('notifications are not supported');
+        } else {
           return false;
         }
       },
@@ -126,7 +111,6 @@ angular.module('notifications', []).
       /* ============== NOTIFICATION METHODS ==============*/
 
       info: function(title, content, userData){
-        console.log(title, content);
         return this.awesomeNotify('info','info', title, content, userData);
       },
 
@@ -177,9 +161,7 @@ angular.module('notifications', []).
 
         if(settings.html5Mode){
           var noti = html5Notify(image, title, content, function() {
-            console.log("inner on display function");
-          }, function(){
-            console.log("inner on close function");
+          }, function() {
           });
 
           // Store desktop notification in
@@ -204,11 +186,9 @@ angular.module('notifications', []).
 
       save: function(){
         // Save all the notifications into localStorage
-        // console.log(JSON);
         if(settings.localStorage){
           localStorage.setItem('$notifications', JSON.stringify(notifications));
         }
-        // console.log(localStorage.getItem('$notifications'));
       },
 
       restore: function(){
@@ -232,7 +212,6 @@ angular.module('notifications', []).
      * Finally, the directive should have its own controller for
      * handling all of the notifications from the notification service
      */
-    console.log('this is a new directive');
     var html =
       '<div class="dr-notification-wrapper" ng-repeat="noti in queue">' +
         '<div class="dr-notification-close-btn" ng-click="removeNotification(noti)">' +
