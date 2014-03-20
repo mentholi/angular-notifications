@@ -21,27 +21,35 @@ angular.module('notifications', []).
     };
 
     function html5Notify(icon, title, content, ondisplay, onclose){
-      if(window.webkitNotifications.checkPermission() === 0){
-        if(!icon){
-          icon = 'favicon.ico';
-        }
-        var noti = window.webkitNotifications.createNotification(icon, title, content);
-        if(typeof ondisplay === 'function'){
-          noti.ondisplay = ondisplay;
-        }
-        if(typeof onclose === 'function'){
-          noti.onclose = onclose;
-        }
-        noti.show();
-
-        // Return notification instance so
-        // we can modify it on application code
-        // if needed
-        return noti;
+      function getDeskNote() {
+        return new Notification(title, {
+          icon: icon,
+          body: content
+        });
       }
-      else {
+
+      if (!('Notification' in window)) {
+        // Check if the browser supports notifications
         settings.html5Mode = false;
         return null;
+      } else if (Notification.permission === 'granted') {
+        // Check if the user wants to be notified
+        return getDeskNote();
+      } else if (Notification.permission !== 'denied') {
+        // Otherwise, we need to ask the user for permission
+        // Note, Chrome does not implement the permission static property
+        // So we have to check for NOT 'denied' instead of 'default'
+        Notification.requestPermission(function (permission) {
+          // Whatever the user answers, we make sure we store the information
+          if(!('permission' in Notification)) {
+            Notification.permission = permission;
+          }
+
+          // If the user is okay, let's create a notification
+          if (permission === 'granted') {
+            return getDeskNote();
+          }
+        });
       }
     }
 
