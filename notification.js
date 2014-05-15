@@ -85,7 +85,7 @@ angular.module('notifications', []).
       },
 
       requestHtml5ModePermissions: function(){
-        if (Notification) {
+        if (('Notification' in window)) {
           if (Notification.permission == 'granted') {
             return true;
           } else {
